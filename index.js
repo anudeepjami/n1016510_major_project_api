@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const mysql2 = require ("./MySQL/mysql2")
 
 //Adding Cross-origin resource sharing
 var corsOptions = {
@@ -14,6 +13,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// DB connection check
+require("./MySQL/mysql2");
+
 // Root path of application
 app.get("/", (req, res) => {
     res.status(200).send("Welcome to Anudeep Jami N1016510 Major Project");
@@ -21,6 +23,7 @@ app.get("/", (req, res) => {
 
 // setting up routes files
 require("./routes.js")(app);
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
