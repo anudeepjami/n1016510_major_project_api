@@ -1,0 +1,16 @@
+{
+  "name": "n1016510_major_project_api",
+  "version": "1.0.0",
+  "description": "Anudeep Jami Major Project Node API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "mysql"
+  ],
+  "author": "Anudeep Jami N1016510",
+  "license": "ISC"
+}
