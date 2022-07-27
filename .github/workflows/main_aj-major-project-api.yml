@@ -27,11 +27,17 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
+      - name: Zip Release
+        uses: TheDoctor0/zip-release@0.6.1
+        with:
+          type: 'zip'
+          filename: 'api.zip'
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
-          name: node-app
-          path: .
+          name: n1016510-MajorProject-API
+          path: api.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,7 +50,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
-          name: node-app
+          name: n1016510-MajorProject-API
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -53,4 +59,4 @@ jobs:
           app-name: 'aj-major-project-api'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C091607362B945C8B04FECFFADF39F32 }}
-          package: .
+          package: api.zip
