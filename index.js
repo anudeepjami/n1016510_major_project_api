@@ -4,7 +4,7 @@ const app = express();
 
 //Adding Cross-origin resource sharing
 var corsOptions = {
-  origin: ["http://localhost:3000","https://aj-major-project-ui.azurewebsites.net"],
+  origin: ["http://localhost:3000","https://aj-major-project-ui.azurewebsites.net","https://anudeepjami-crowdfunding.me"],
 };
 app.use(cors(corsOptions));
 
