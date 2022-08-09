@@ -18,7 +18,7 @@ require("./MySQL/mysql2");
 
 // Root path of application
 app.get("/", (req, res) => {
-    res.status(200).send("Welcome to Anudeep Jami N1016510 Major Project");
+    res.status(200).send("Welcome to Anudeep Jami N1016510 DAO based crowdfunding Major Project API");
 });
 
 // setting up routes files
