@@ -1,5 +1,4 @@
 const mysql2 = require("mysql2");
-const https = require('https');
 const fs = require("fs");
 
 // Create a connection to the database
