@@ -48,7 +48,7 @@ contract CrowdfundingEvent{
     uint public total_votes = 0;
     voting_event[] public voting_events;
     voting_address_status[] voting_events_address_status;
-    discussion_forum[] public funding_discussions;
+    discussion_forum[] public discussions;
     
 
     struct contributor_details{
@@ -65,7 +65,6 @@ contract CrowdfundingEvent{
         bool event_completion_status;
         uint yes_votes;
         uint no_votes;
-        discussion_forum[] voting_discussions;
     }
 
     struct voting_address_status{
@@ -73,6 +72,7 @@ contract CrowdfundingEvent{
     }
 
     struct discussion_forum{
+        uint index;
         address comment_address;
         string comment;
         uint rating;
@@ -93,6 +93,10 @@ contract CrowdfundingEvent{
         return voting_events;
     }
 
+    function GetCrowdfundingDiscussionForum() public view returns (discussion_forum[] memory){
+        return discussions;
+    }
+
     function DepositToCrowdfundingEvent() public payable {
         require(msg.value >= crowdfunding_event_min_deposit, 'deposit value less than minimum offer value');
         require(msg.value % crowdfunding_event_min_deposit == 0, 'deposit value not in multiples of minimum offer value');
@@ -108,6 +112,7 @@ contract CrowdfundingEvent{
 
     function CreateAnVotingEvent(string memory title, string memory body, address payable destination_wallet_address, uint amount_to_send) public {
         require(crowdfunding_event_manager_address == msg.sender, 'only managers can create fund requests');
+        require(address(this).balance >= amount_to_send, 'This Crowdfunding Event has less money than the amount you want to send');
         voting_event storage temp = voting_events.push();
         temp.title = title;
         temp.body = body;
@@ -148,21 +153,11 @@ contract CrowdfundingEvent{
         voting_events[voting_event_index].event_completion_status = true;
     }
 
-    function VotingEventDiscussionForum(uint voting_event_index, string memory comment, uint rating) public{
+    function CrowdfundingDiscussionForum(uint index,string memory comment, uint rating) public{
         require(contributor_votes[msg.sender] > 0,'You cannot comment as you did not contribute to the crowdfunding event');
-        voting_events[voting_event_index].voting_discussions.push(
+        discussions.push(
             discussion_forum(
-                msg.sender,
-                comment,
-                rating
-            )
-        );
-    }
-
-    function FundingDiscussionForum(string memory comment, uint rating) public{
-        require(contributor_votes[msg.sender] > 0,'You cannot comment as you did not contribute to the crowdfunding event');
-        funding_discussions.push(
-            discussion_forum(
+                index,
                 msg.sender,
                 comment,
                 rating
