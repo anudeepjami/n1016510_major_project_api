@@ -97,9 +97,14 @@ contract CrowdfundingEvent{
         return discussions;
     }
 
+    function GetCrowdfundingEventDetails() public view returns (string memory, string memory, address, uint, contributor_details[] memory, uint, uint, uint){
+        return (crowdfunding_event_title, crowdfunding_event_content, crowdfunding_event_manager_address, crowdfunding_event_min_deposit, contributors_details,total_votes,address(this).balance,voting_events.length);
+    }
+
     function DepositToCrowdfundingEvent() public payable {
         require(msg.value >= crowdfunding_event_min_deposit, 'deposit value less than minimum offer value');
         require(msg.value % crowdfunding_event_min_deposit == 0, 'deposit value not in multiples of minimum offer value');
+        require(contributor_votes[msg.sender] == 0,'You have already contributed to the event');
         contributor_votes[msg.sender] = msg.value / crowdfunding_event_min_deposit;
         contributors_details.push(
             contributor_details(
