@@ -42,21 +42,40 @@ contract CrowdfundingEvent{
     string public crowdfunding_event_content;
     address public crowdfunding_event_manager_address;
     uint public crowdfunding_event_min_deposit;
-    uint public contract_creation_timestamp;
-    address[] public contributors_addresses;
-    mapping(address => bool) public contributors_check;
-    mapping(address => uint) public contributors_weight;
+    //address[] public contributors_addresses;
+    contributor_details[] public contributors_details;
+    mapping(address => uint) public contributor_votes;
+    uint public total_votes = 0;
     voting_event[] public voting_events;
+    voting_address_status[] voting_events_address_status;
+    discussion_forum[] public funding_discussions;
+    
 
+    struct contributor_details{
+        address contributor_address;
+        uint contributor_votes;
+    }
 
     struct voting_event{
         string title;
         string body;
         address payable destination_wallet_address;
         uint amount_to_send;
-        bool event_status;
-        uint yes_count;
-        mapping(address => bool) address_status;
+        bool event_success_status;
+        bool event_completion_status;
+        uint yes_votes;
+        uint no_votes;
+        discussion_forum[] voting_discussions;
+    }
+
+    struct voting_address_status{
+        mapping(address => bool) address_voting_status;
+    }
+
+    struct discussion_forum{
+        address comment_address;
+        string comment;
+        uint rating;
     }
 
     constructor(string memory _crowdfunding_event_title, string memory _crowdfunding_event_content, address _crowdfunding_event_manager_address, uint _crowdfunding_event_min_deposit) {
@@ -64,19 +83,27 @@ contract CrowdfundingEvent{
         crowdfunding_event_content = _crowdfunding_event_content;
         crowdfunding_event_manager_address = _crowdfunding_event_manager_address;
         crowdfunding_event_min_deposit = _crowdfunding_event_min_deposit;
-        contract_creation_timestamp = block.timestamp;
     }
     
-    function GetContributorsAddresses() public view returns (address[] memory){
-        return contributors_addresses;
+    function GetContributorsAddresses() public view returns (contributor_details[] memory){
+        return contributors_details;
+    }
+
+    function GetVotingEvents() public view returns (voting_event[] memory){
+        return voting_events;
     }
 
     function DepositToCrowdfundingEvent() public payable {
         require(msg.value >= crowdfunding_event_min_deposit, 'deposit value less than minimum offer value');
         require(msg.value % crowdfunding_event_min_deposit == 0, 'deposit value not in multiples of minimum offer value');
-        contributors_addresses.push(msg.sender);
-        contributors_check[msg.sender] = true;
-        contributors_weight[msg.sender] = msg.value / crowdfunding_event_min_deposit;
+        contributor_votes[msg.sender] = msg.value / crowdfunding_event_min_deposit;
+        contributors_details.push(
+            contributor_details(
+                msg.sender,
+                contributor_votes[msg.sender]
+            )
+        );
+        total_votes = total_votes + contributor_votes[msg.sender];
     }
 
     function CreateAnVotingEvent(string memory title, string memory body, address payable destination_wallet_address, uint amount_to_send) public {
@@ -86,24 +113,60 @@ contract CrowdfundingEvent{
         temp.body = body;
         temp.destination_wallet_address = destination_wallet_address;
         temp.amount_to_send = amount_to_send;
-        temp.event_status = false;
-        temp.yes_count = 0;
+        temp.event_success_status = false;
+        temp.event_completion_status = false;
+        temp.yes_votes = 0;
+        temp.no_votes = 0;
+
+        voting_address_status storage temp2= voting_events_address_status.push();
     }
 
-    function VoteForVotingEvent(uint voting_event_index) public{
-        require(contributors_check[msg.sender],'You cannot vote as you did not contribute to the crowdfunding event');
-        require(voting_events[voting_event_index].address_status[msg.sender] == false , 'You have already voted for the funding event');
+    function VoteForVotingEvent(uint voting_event_index, bool vote) public{
+        require(contributor_votes[msg.sender] > 0,'You cannot vote as you did not contribute to the crowdfunding event');
+        require(voting_events_address_status[voting_event_index].address_voting_status[msg.sender] == false , 'You have already voted for the funding event');
 
-        voting_events[voting_event_index].yes_count = voting_events[voting_event_index].yes_count + 1;
-        voting_events[voting_event_index].address_status[msg.sender] = true;
+        vote ? voting_events[voting_event_index].yes_votes = voting_events[voting_event_index].yes_votes + contributor_votes[msg.sender]
+                : voting_events[voting_event_index].no_votes = voting_events[voting_event_index].no_votes + contributor_votes[msg.sender];
+        voting_events_address_status[voting_event_index].address_voting_status[msg.sender] = true;
     }
 
     function CompleteVotingEvent(uint voting_event_index) public{
-        require(voting_events[voting_event_index].event_status == false, 'Voting Event Already Completed' );
-        require(voting_events[voting_event_index].yes_count > (contributors_addresses.length / 2), 'more than 50% contributors have to cast their vote for voting event to close');
+        require(voting_events[voting_event_index].event_completion_status == false, 'Voting Event Already Completed' );
+        require(voting_events[voting_event_index].yes_votes > (total_votes / 2) 
+                    || voting_events[voting_event_index].no_votes > (total_votes / 2)
+                        , 'more than 50% votes should say yes/no to send/reject ethereum transfer');
 
-        voting_events[voting_event_index].destination_wallet_address.transfer(voting_events[voting_event_index].amount_to_send);
-        voting_events[voting_event_index].event_status = true;
+        if(voting_events[voting_event_index].yes_votes > (total_votes / 2))
+        {
+            voting_events[voting_event_index].destination_wallet_address.transfer(voting_events[voting_event_index].amount_to_send);
+            voting_events[voting_event_index].event_success_status = true;
+        }
+        else
+        {
+            voting_events[voting_event_index].event_success_status = false;
+        }
+        voting_events[voting_event_index].event_completion_status = true;
     }
 
+    function VotingEventDiscussionForum(uint voting_event_index, string memory comment, uint rating) public{
+        require(contributor_votes[msg.sender] > 0,'You cannot comment as you did not contribute to the crowdfunding event');
+        voting_events[voting_event_index].voting_discussions.push(
+            discussion_forum(
+                msg.sender,
+                comment,
+                rating
+            )
+        );
+    }
+
+    function FundingDiscussionForum(string memory comment, uint rating) public{
+        require(contributor_votes[msg.sender] > 0,'You cannot comment as you did not contribute to the crowdfunding event');
+        funding_discussions.push(
+            discussion_forum(
+                msg.sender,
+                comment,
+                rating
+            )
+        );
+    }
 }
