@@ -47,7 +47,7 @@ contract CrowdfundingEvent{
     mapping(address => uint) public contributor_votes;
     uint public total_votes = 0;
     voting_event[] public voting_events;
-    voting_address_status[] voting_events_address_status;
+    voting_address_status[] voting_event_address_status;
     discussion_forum[] public discussions;
     
 
@@ -65,6 +65,13 @@ contract CrowdfundingEvent{
         bool event_completion_status;
         uint yes_votes;
         uint no_votes;
+        voting_address_status_array[] polling_data;
+    }
+
+    struct voting_address_status_array
+    {
+        address contributor_address;
+        bool contributor_vote_status;
     }
 
     struct voting_address_status{
@@ -128,16 +135,22 @@ contract CrowdfundingEvent{
         temp.yes_votes = 0;
         temp.no_votes = 0;
 
-        voting_address_status storage temp2= voting_events_address_status.push();
+        voting_address_status storage temp2= voting_event_address_status.push();
     }
 
     function VoteForVotingEvent(uint voting_event_index, bool vote) public{
         require(contributor_votes[msg.sender] > 0,'You cannot vote as you did not contribute to the crowdfunding event');
-        require(voting_events_address_status[voting_event_index].address_voting_status[msg.sender] == false , 'You have already voted for the funding event');
+        require(voting_event_address_status[voting_event_index].address_voting_status[msg.sender] == false , 'You have already voted for the funding event');
 
         vote ? voting_events[voting_event_index].yes_votes = voting_events[voting_event_index].yes_votes + contributor_votes[msg.sender]
                 : voting_events[voting_event_index].no_votes = voting_events[voting_event_index].no_votes + contributor_votes[msg.sender];
-        voting_events_address_status[voting_event_index].address_voting_status[msg.sender] = true;
+        voting_event_address_status[voting_event_index].address_voting_status[msg.sender] = true;
+        voting_events[voting_event_index].polling_data.push(
+                voting_address_status_array(
+                    msg.sender,
+                    vote
+                )
+            );
     }
 
     function CompleteVotingEvent(uint voting_event_index) public{
