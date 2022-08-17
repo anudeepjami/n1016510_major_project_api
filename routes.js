@@ -11,10 +11,13 @@ module.exports = app => {
 
   router.get("/", (req, res) => {
     res.status(200).send("Welcome to Version 1 of Anudeep Jami N1016510 Major Project");
-});
+  });
 
   //Get user wallet details stored in db
-  router.get("/getwallet", userController.GetWalletDetails);
+  router.put("/getwallet", userController.GetWalletDetails);
+
+  //update user wallet details or insert new user wallet details stored in db
+  router.post("/updatewallet", userController.UpdateWalletDetails);
 
 
 }
