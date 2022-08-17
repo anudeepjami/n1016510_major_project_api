@@ -3,7 +3,6 @@ pragma solidity 0.8.16;
 
 contract CrowdfundingEvents{
     address public crowdfunding_admin;
-    string public crowdfunding_admin_name;
     crowd_funding_event[] public crowdFundingEventAddresses;
 
     struct crowd_funding_event {
@@ -14,9 +13,8 @@ contract CrowdfundingEvents{
         uint crowdfunding_event_min_deposit;
     }
 
-    constructor(string memory _crowdfunding_admin_name){
+    constructor(){
         crowdfunding_admin = msg.sender;
-        crowdfunding_admin_name = _crowdfunding_admin_name;
     }
 
     function CreateCrowdfundingEvent(string memory _crowdfunding_event_title, string memory _crowdfunding_event_content, uint _crowdfunding_event_min_deposit) public{
@@ -42,7 +40,6 @@ contract CrowdfundingEvent{
     string public crowdfunding_event_content;
     address public crowdfunding_event_manager_address;
     uint public crowdfunding_event_min_deposit;
-    //address[] public contributors_addresses;
     contributor_details[] public contributors_details;
     mapping(address => uint) public contributor_votes;
     uint public total_votes = 0;
@@ -92,9 +89,6 @@ contract CrowdfundingEvent{
         crowdfunding_event_min_deposit = _crowdfunding_event_min_deposit;
     }
     
-    function GetContributorsAddresses() public view returns (contributor_details[] memory){
-        return contributors_details;
-    }
 
     function GetVotingEvents() public view returns (voting_event[] memory){
         return voting_events;
@@ -109,6 +103,7 @@ contract CrowdfundingEvent{
     }
 
     function DepositToCrowdfundingEvent() public payable {
+        require(voting_events.length == 0, 'No contributions are accepted upon start of voting events');
         require(msg.value >= crowdfunding_event_min_deposit, 'deposit value less than minimum offer value');
         require(msg.value % crowdfunding_event_min_deposit == 0, 'deposit value not in multiples of minimum offer value');
         require(contributor_votes[msg.sender] == 0,'You have already contributed to the event');
@@ -154,6 +149,7 @@ contract CrowdfundingEvent{
     }
 
     function CompleteVotingEvent(uint voting_event_index) public{
+        require(address(this).balance >= voting_events[voting_event_index].amount_to_send, 'This Crowdfunding Event has less money than the account manager wants to send' );
         require(voting_events[voting_event_index].event_completion_status == false, 'Voting Event Already Completed' );
         require(voting_events[voting_event_index].yes_votes > (total_votes / 2) 
                     || voting_events[voting_event_index].no_votes > (total_votes / 2)
