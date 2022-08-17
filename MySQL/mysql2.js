@@ -17,7 +17,7 @@ var connection_string = {
 
 var pool = mysql2.createPool(connection_string);
 
-pool.query("select * from user_table",(err, data) => {
+pool.query("select * from crowdfunding_data",(err, data) => {
   if(err) {
     // db connection failure check log
       console.error(err);
