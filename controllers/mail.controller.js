@@ -14,7 +14,7 @@ exports.SendEmail = async (req, res) => {
             var toAddresses = [];
             req.body.fundDetails[4].forEach((item, index) => {
                 WalletsInfo.forEach((item2, index2) => {
-                    if(item[0] == item2.wallet_address)
+                    if(item[0].toLowerCase() == item2.wallet_address.toLowerCase())
                         toAddresses.push(item2.email_id);
                 })
             });
