@@ -42,10 +42,12 @@ contract CrowdfundingEvent{
     uint public crowdfunding_event_min_deposit;
     contributor_details[] public contributors_details;
     mapping(address => uint) public contributor_votes;
+    mapping(address => bool) public contributor_already_created_refund_event;
     uint public total_votes = 0;
     voting_event[] public voting_events;
     voting_address_status[] voting_event_address_status;
     discussion_forum[] public discussions;
+    bool public refund_event_active;
     
 
     struct contributor_details{
@@ -60,6 +62,7 @@ contract CrowdfundingEvent{
         uint amount_to_send;
         bool event_success_status;
         bool event_completion_status;
+        bool refund_event;
         uint yes_votes;
         uint no_votes;
         voting_address_status_array[] polling_data;
@@ -117,18 +120,22 @@ contract CrowdfundingEvent{
         total_votes = total_votes + contributor_votes[msg.sender];
     }
 
-    function CreateAnVotingEvent(string memory title, string memory body, address payable destination_wallet_address, uint amount_to_send) public {
-        require(crowdfunding_event_manager_address == msg.sender, 'only managers can create fund requests');
+    function CreateAnVotingEvent(string memory title, string memory body, address payable destination_wallet_address, uint amount_to_send, bool refund_event) public {
+        require(crowdfunding_event_manager_address == msg.sender || (refund_event == true && contributor_votes[msg.sender] > 0), 'only managers can create fund requests, contributors are only allowed to create refund requests');
+        require(refund_event_active == false, 'No new events can be created when an refund event is active');
+        require(contributor_already_created_refund_event[msg.sender] == false, 'contributor already create a failed refund event before');
         require(address(this).balance >= amount_to_send, 'This Crowdfunding Event has less money than the amount you want to send');
         voting_event storage temp = voting_events.push();
         temp.title = title;
         temp.body = body;
         temp.destination_wallet_address = destination_wallet_address;
         temp.amount_to_send = amount_to_send;
-        temp.event_success_status = false;
-        temp.event_completion_status = false;
-        temp.yes_votes = 0;
-        temp.no_votes = 0;
+ 
+        if(refund_event == true){
+            temp.refund_event = true;
+            refund_event_active = true;
+            contributor_already_created_refund_event[msg.sender] = true;
+        }
 
         voting_address_status storage temp2= voting_event_address_status.push();
     }
