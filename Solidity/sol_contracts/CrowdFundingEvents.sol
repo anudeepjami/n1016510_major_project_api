@@ -125,6 +125,7 @@ contract CrowdfundingEvent{
         require(refund_event_active == false, 'No new events can be created when an refund event is active');
         require(contributor_already_created_refund_event[msg.sender] == false, 'contributor already create a failed refund event before');
         require(address(this).balance >= amount_to_send, 'This Crowdfunding Event has less money than the amount you want to send');
+        require(address(this).balance > 0, 'This Crowdfunding Event has no money to create new voting events');
         voting_event storage temp = voting_events.push();
         temp.title = title;
         temp.body = body;
@@ -167,8 +168,9 @@ contract CrowdfundingEvent{
         {
             if(voting_events[voting_event_index].refund_event)
             {
+                uint fund_balance = (address(this).balance);
                 for(uint i = 0; i < contributors_details.length; i++){
-                    payable(contributors_details[i].contributor_address).transfer((address(this).balance * contributor_votes[contributors_details[i].contributor_address])/total_votes);
+                    payable(contributors_details[i].contributor_address).transfer((fund_balance * contributor_votes[contributors_details[i].contributor_address])/total_votes);
                 }
             }
             else
