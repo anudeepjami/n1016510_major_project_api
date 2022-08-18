@@ -157,7 +157,7 @@ contract CrowdfundingEvent{
     }
 
     function CompleteVotingEvent(uint voting_event_index) public{
-        require(address(this).balance >= voting_events[voting_event_index].amount_to_send, 'This Crowdfunding Event has less money than the account manager wants to send' );
+        require(address(this).balance >= voting_events[voting_event_index].amount_to_send || refund_event_active == true, 'This Crowdfunding Event has less money than the amount set at the creation of this voting request' );
         require(voting_events[voting_event_index].event_completion_status == false, 'Voting Event Already Completed' );
         require(voting_events[voting_event_index].yes_votes > (total_votes / 2) 
                     || voting_events[voting_event_index].no_votes > (total_votes / 2)
@@ -165,7 +165,16 @@ contract CrowdfundingEvent{
 
         if(voting_events[voting_event_index].yes_votes > (total_votes / 2))
         {
-            voting_events[voting_event_index].destination_wallet_address.transfer(voting_events[voting_event_index].amount_to_send);
+            if(voting_events[voting_event_index].refund_event)
+            {
+                for(uint i = 0; i < contributors_details.length; i++){
+                    payable(contributors_details[i].contributor_address).transfer((address(this).balance * contributor_votes[contributors_details[i].contributor_address])/total_votes);
+                }
+            }
+            else
+            {
+                voting_events[voting_event_index].destination_wallet_address.transfer(voting_events[voting_event_index].amount_to_send);
+            }
             voting_events[voting_event_index].event_success_status = true;
         }
         else
@@ -173,6 +182,10 @@ contract CrowdfundingEvent{
             voting_events[voting_event_index].event_success_status = false;
         }
         voting_events[voting_event_index].event_completion_status = true;
+        if(voting_events[voting_event_index].refund_event)
+            {
+                refund_event_active = false;
+            }
     }
 
     function CrowdfundingDiscussionForum(uint index,string memory comment, uint rating) public{
