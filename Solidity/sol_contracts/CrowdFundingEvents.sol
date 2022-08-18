@@ -62,10 +62,10 @@ contract CrowdfundingEvent{
         uint amount_to_send;
         bool event_success_status;
         bool event_completion_status;
-        bool refund_event;
         uint yes_votes;
         uint no_votes;
         voting_address_status_array[] polling_data;
+        bool refund_event;
     }
 
     struct voting_address_status_array
@@ -141,6 +141,7 @@ contract CrowdfundingEvent{
     }
 
     function VoteForVotingEvent(uint voting_event_index, bool vote) public{
+        require(voting_events[voting_event_index].event_completion_status == false, 'Voting Event Already Completed' );
         require(contributor_votes[msg.sender] > 0,'You cannot vote as you did not contribute to the crowdfunding event');
         require(voting_event_address_status[voting_event_index].address_voting_status[msg.sender] == false , 'You have already voted for the funding event');
 
