@@ -25,38 +25,43 @@ var crowdfundingEventContract_instance;
 
 // deploying contract to ganache local ethereum network
 beforeEach(async () => {
+    
     // load all ganache accounts
     ganache_acnts = await web3.eth.getAccounts();
+    console.log(ganache_acnts);
 
     // deploy ethereum contract to ganache local ethereum network
     crowdfundingEventsContract_instance = await new web3.eth
         .Contract(crowdfundingEventsContract.interface)
-        .deploy({ data: crowdfundingEventsContract.bytecode, arguments: ['AJ Hybrid DAO Crowdfunding'] })
-        .send({ from: ganache_acnts[0], gas: '4000000' });
+        .deploy({ data: crowdfundingEventsContract.bytecode})
+        .send({ from: ganache_acnts[0], gas: '5000000' });
 
     await crowdfundingEventsContract_instance.methods
         .CreateCrowdfundingEvent('Event1', 'Event1 content', 10000000)
-        .send({ from: ganache_acnts[0], gas: '3000000' });
+        .send({ from: ganache_acnts[0], gas: '30000000' });
 
     var crowdfundingEvents = await crowdfundingEventsContract_instance.methods.GetCrowdfundingEvents().call();
 
     crowdfundingEventContract_instance = await new web3.eth
-        .Contract(crowdfundingEventContract.interface, crowdfundingEvents[0].crowdfunding_event_address, {handleRevert: true});
+        .Contract(crowdfundingEventContract.interface, 
+                    crowdfundingEvents[0].crowdfunding_event_address, 
+                    {handleRevert: true});
 
     await crowdfundingEventContract_instance.methods
         .DepositToCrowdfundingEvent()
-        .send({ from: ganache_acnts[1], value: 100000000, gas: '3000000' });
+        .send({ from: ganache_acnts[1], value: 100000000, gas: '30000000' });
     await crowdfundingEventContract_instance.methods
         .DepositToCrowdfundingEvent()
-        .send({ from: ganache_acnts[2], value: 300000000, gas: '3000000' });
+        .send({ from: ganache_acnts[2], value: 300000000, gas: '30000000' });
 
     await crowdfundingEventContract_instance.methods
-        .CreateAnVotingEvent('Voting Event1', 'Voting Event1 Description', ganache_acnts[5], 1000000)
+        .CreateAnVotingEvent('Voting Event1', 'Voting Event1 Description', ganache_acnts[5], 1000000,0)
         .send({ from: ganache_acnts[0], gas: '3000000' });
 });
 
 
 describe('CrowdFundingEvents unit testing', () => {
+
     it('CrowdFundingEvents contract deployment success by comparing contract creator address', async () => {
         var eventAdmin = await crowdfundingEventsContract_instance.methods.crowdfunding_admin().call()
         // checkcing if contract creator is set as admin in the contract
