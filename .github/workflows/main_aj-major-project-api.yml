@@ -21,11 +21,14 @@ jobs:
         with:
           node-version: '16.x'
 
-      - name: npm install, build, and test
+      - name: npm install packages
         run: |
           npm install
-          npm run build --if-present
           npm run test --if-present
+          
+      - name: Run Unit Test cases using mocha
+        run: |
+          npm run tests
 
       - name: Zip Release
         uses: TheDoctor0/zip-release@0.6.1
