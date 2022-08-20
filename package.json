@@ -7,8 +7,8 @@
     "start": "node index.js",
     "debug": "nodemon index.js",
     "tests": "mocha tests/*.test.js",
-    "deploy": "NODE_OPTIONS='--openssl-legacy-provider' node Solidity/rinkeby.js",
-    "compile": "NODE_OPTIONS='--openssl-legacy-provider' node Solidity/compiler.js"
+    "deploy": "NODE_OPTIONS='--openssl-legacy-provider' node Solidity/contract_deployer.js",
+    "compile": "NODE_OPTIONS='--openssl-legacy-provider' node Solidity/contract_compiler.js"
   },
   "keywords": [
     "node",
