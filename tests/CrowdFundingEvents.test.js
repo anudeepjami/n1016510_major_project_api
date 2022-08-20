@@ -62,65 +62,65 @@ beforeEach(async () => {
 
 describe('CrowdFundingEvents unit testing', () => {
 
-    it('CrowdFundingEvents contract deployment success by comparing contract creator address', async () => {
+    it('1) CrowdFundingEvents contract deployment success by comparing contract creator address', async () => {
         var eventAdmin = await crowdfundingEventsContract_instance.methods.crowdfunding_admin().call()
         // checkcing if contract creator is set as admin in the contract
         assert.strictEqual(eventAdmin, ganache_acnts[0]);
     });
-    it('CrowdFundingEvent contract deployment success check by comparing addresses', async () => {
+    it('2) CrowdFundingEvent contract deployment success check by comparing addresses', async () => {
         var crowdfundingEvents = await crowdfundingEventsContract_instance.methods.GetCrowdfundingEvents().call();
         assert.strictEqual(crowdfundingEvents[0].crowdfunding_event_address, crowdfundingEventContract_instance.options.address);
     });
-    it('CrowdFundingEvent contract check if manager is correct', async () => {
+    it('3) CrowdFundingEvent contract check if manager is correct', async () => {
         var crowdfunding_event_manager_address = await crowdfundingEventContract_instance.methods.crowdfunding_event_manager_address().call();
         assert.strictEqual(crowdfunding_event_manager_address, ganache_acnts[0]);
     });
-    it('CrowdFundingEvent contract create success with 2 unique users', async () => {
-        await crowdfundingEventsContract_instance.methods
-            .CreateCrowdfundingEvent('Event1', 'Event1 content', 10000000)
-            .send({ from: ganache_acnts[3], gas: '3000000' });
-        await crowdfundingEventsContract_instance.methods
-            .CreateCrowdfundingEvent('Event2', 'Event2 content', 10000000)
-            .send({ from: ganache_acnts[4], gas: '3000000' });
-        var crowdfundingEvents = await crowdfundingEventsContract_instance.methods.GetCrowdfundingEvents().call();
-        assert.strictEqual(crowdfundingEvents[1].crowdfunding_event_title, 'Event1');
-        assert.strictEqual(crowdfundingEvents[1].crowdfunding_event_manager_address, ganache_acnts[3]);
-        assert.strictEqual(crowdfundingEvents[2].crowdfunding_event_title, 'Event2');
-        assert.strictEqual(crowdfundingEvents[2].crowdfunding_event_manager_address, ganache_acnts[4]);
-    });
-    it('CrowdFundingEvent contract check if another user is able to deposit and if user is set as a contributor ', async () => {
-        await crowdfundingEventContract_instance.methods
-            .DepositToCrowdfundingEvent()
-            .send({ from: ganache_acnts[1], value: 10000000, gas: '3000000' });
-        var contributor_votes = await crowdfundingEventContract_instance.methods.contributor_votes(ganache_acnts[1]).call()
-        assert.strictEqual(contributor_votes > 0, true);
-    });
-    it('CrowdFundingEvent contract check if another user is not able to deposit due to less contribution ', async () => {
-        try {
-            await crowdfundingEventContract_instance.methods
-                .DepositToCrowdfundingEvent()
-                .send({ from: ganache_acnts[1], value: 1000000, gas: '3000000' });
-            throw 'test case should fail';
-        } catch (error) {
-            assert.strictEqual(error.reason, 'deposit value less than minimum offer value');
-        }
-    });
-    it('CrowdFundingEvent contract create voting event ', async () => {
-        await crowdfundingEventContract_instance.methods
-            .CreateAnVotingEvent('Voting Event2', 'Voting Event2 Description', ganache_acnts[6], 2000000)
-            .send({ from: ganache_acnts[0], gas: '3000000' });
-        var getVotingEvents = await crowdfundingEventContract_instance.methods.GetVotingEvents().call();
-        assert.strictEqual(ganache_acnts[5],getVotingEvents[0].destination_wallet_address);
-        assert.strictEqual(ganache_acnts[6],getVotingEvents[1].destination_wallet_address);
-    });
-    it('CrowdFundingEvent contract create discussion success', async () => {
+    // it('4) CrowdFundingEvent contract create success with 2 unique users', async () => {
+    //     await crowdfundingEventsContract_instance.methods
+    //         .CreateCrowdfundingEvent('Event1', 'Event1 content', 10000000)
+    //         .send({ from: ganache_acnts[3], gas: '3000000' });
+    //     await crowdfundingEventsContract_instance.methods
+    //         .CreateCrowdfundingEvent('Event2', 'Event2 content', 10000000)
+    //         .send({ from: ganache_acnts[4], gas: '3000000' });
+    //     var crowdfundingEvents = await crowdfundingEventsContract_instance.methods.GetCrowdfundingEvents().call();
+    //     assert.strictEqual(crowdfundingEvents[1].crowdfunding_event_title, 'Event1');
+    //     assert.strictEqual(crowdfundingEvents[1].crowdfunding_event_manager_address, ganache_acnts[3]);
+    //     assert.strictEqual(crowdfundingEvents[2].crowdfunding_event_title, 'Event2');
+    //     assert.strictEqual(crowdfundingEvents[2].crowdfunding_event_manager_address, ganache_acnts[4]);
+    // });
+    // it('5) CrowdFundingEvent contract check if another user is able to deposit and if user is set as a contributor ', async () => {
+    //     await crowdfundingEventContract_instance.methods
+    //         .DepositToCrowdfundingEvent()
+    //         .send({ from: ganache_acnts[1], value: 10000000, gas: '3000000' });
+    //     var contributor_votes = await crowdfundingEventContract_instance.methods.contributor_votes(ganache_acnts[1]).call()
+    //     assert.strictEqual(contributor_votes > 0, true);
+    // });
+    // it('6) CrowdFundingEvent contract check if another user is not able to deposit due to less contribution ', async () => {
+    //     try {
+    //         await crowdfundingEventContract_instance.methods
+    //             .DepositToCrowdfundingEvent()
+    //             .send({ from: ganache_acnts[1], value: 1000000, gas: '3000000' });
+    //         throw 'test case should fail';
+    //     } catch (error) {
+    //         assert.strictEqual(error.reason, 'deposit value less than minimum offer value');
+    //     }
+    // });
+    // it('7) CrowdFundingEvent contract create voting event ', async () => {
+    //     await crowdfundingEventContract_instance.methods
+    //         .CreateAnVotingEvent('Voting Event2', 'Voting Event2 Description', ganache_acnts[6], 2000000)
+    //         .send({ from: ganache_acnts[0], gas: '3000000' });
+    //     var getVotingEvents = await crowdfundingEventContract_instance.methods.GetVotingEvents().call();
+    //     assert.strictEqual(ganache_acnts[5],getVotingEvents[0].destination_wallet_address);
+    //     assert.strictEqual(ganache_acnts[6],getVotingEvents[1].destination_wallet_address);
+    // });
+    it('8) CrowdFundingEvent contract create discussion success', async () => {
         await crowdfundingEventContract_instance.methods
             .CrowdfundingDiscussionForum( 0, 'I am great', 5)
             .send({ from: ganache_acnts[1], gas: '3000000' });
         var discussions = await crowdfundingEventContract_instance.methods.GetCrowdfundingDiscussionForum().call();
         assert.strictEqual('I am great',discussions[0].comment);
     });
-    it('CrowdFundingEvent contract create discussion fail', async () => {
+    it('9) CrowdFundingEvent contract create discussion fail', async () => {
         try {
             await crowdfundingEventContract_instance.methods
                 .CrowdfundingDiscussionForum( 0, 'I am great', 5)
@@ -130,7 +130,7 @@ describe('CrowdFundingEvents unit testing', () => {
             assert.strictEqual(error.reason, 'You cannot comment as you did not contribute to the crowdfunding event');
         }
     });
-    it('CrowdFundingEvent contract voting success', async () => {
+    it('10) CrowdFundingEvent contract voting success', async () => {
         const preBalance = await web3.eth.getBalance(ganache_acnts[5]);
         await crowdfundingEventContract_instance.methods
             .VoteForVotingEvent(0, true)
@@ -142,7 +142,7 @@ describe('CrowdFundingEvents unit testing', () => {
         const postBalance = await web3.eth.getBalance(ganache_acnts[5]);
         assert.ok(postBalance>preBalance);
     });
-    it('CrowdFundingEvent contract voting failure', async () => {
+    it('11) CrowdFundingEvent contract voting failure', async () => {
         const preBalance = await web3.eth.getBalance(ganache_acnts[5]);
         await crowdfundingEventContract_instance.methods
             .VoteForVotingEvent(0, false)
