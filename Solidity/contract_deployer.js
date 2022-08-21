@@ -9,7 +9,7 @@ const crowdfundingEventsContract = {
     bytecode: CrowdFundingEventsContract.contracts['CrowdfundingEvents.sol']['CrowdfundingEvents'].evm.bytecode.object
 };
 
-//deploy contract to local ganache instance
+//create local ganache wallet instance
 const ganache_wallet_object = new truffle_wallet(
     'coin tunnel delay diamond wreck bamboo robust change muscle mule depend stem',
     'HTTP://127.0.0.1:7545'
@@ -35,7 +35,7 @@ const deploy_2 = async () => {
 };
 deploy_2();
 
-//deploy contract to rinkeby eth network using infura api endpoint
+//create rinkeby network wallet instance
 const infura_wallet_object = new truffle_wallet(
     'lizard table distance moon stage champion person air discover cave army concert',
     'https://rinkeby.infura.io/v3/d1bcda716078458b90d0962f45b0a1a2'
@@ -57,6 +57,7 @@ const deploy = async () => {
 
     infura_wallet_object.engine.stop();
 
+    //store contract addresses to a json file in compiled_contracts folder
     try {
         fs.writeFileSync('Solidity/compiled_contracts/ContractAddress.json', JSON.stringify(deployed_contract_addresses, null, 4));
         console.log("JSON storage success");

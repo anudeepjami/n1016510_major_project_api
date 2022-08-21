@@ -1,6 +1,7 @@
 const sol_compiler = require('solc');
 const fs = require('fs');
 
+//structure solidity file in defined structure to generate compiles code
 var input_code = {
     language: 'Solidity',
     sources: {
@@ -17,8 +18,10 @@ var input_code = {
     }
 }; 
 
+// compile Solidity code using solidity compiler
 const output_code = JSON.parse(sol_compiler.compile(JSON.stringify(input_code)));
 
+//store compiled solidity code in JSON file
 try {
     fs.writeFileSync('Solidity/compiled_contracts/CrowdfundingEvents.json', JSON.stringify(output_code, null, 4));
     console.log("JSON storage success");
@@ -26,5 +29,4 @@ try {
     console.error(err);
 }
 
-exports.contract = output_code;
 

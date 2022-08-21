@@ -148,7 +148,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('0.9', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'deposit value less than minimum offer value');
+            assert.strictEqual(error.reason, 'Deposit value less than minimum offer value set by the fundraiser');
         }
     });
 
@@ -160,7 +160,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('1.5', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'deposit value not in multiples of minimum offer value');
+            assert.strictEqual(error.reason, 'Deposit value not in multiples of minimum offer value set by the fundraiser');
         }
     });
 
@@ -172,7 +172,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[1], value: Web3.utils.toWei('1', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'You have already contributed to the event');
+            assert.strictEqual(error.reason, 'You have already contributed to the fundraiser');
         }
     });
 
@@ -188,7 +188,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('1', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'No contributions are accepted upon start of voting events');
+            assert.strictEqual(error.reason, 'No new contributions are accepted upon the start of voting/refund events');
         }
     });
 
@@ -215,7 +215,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[1], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'only managers can create fund requests, contributors are only allowed to create refund requests');
+            assert.strictEqual(error.reason, 'Only managers can create voting/refund requests, contributors are only allowed to create refund requests');
         }
     });
 
@@ -227,7 +227,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[0], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'This Crowdfunding Event has less money than the amount you want to send');
+            assert.strictEqual(error.reason, 'This fundraiser has less money than the amount you want to send');
         }
     });
 
@@ -243,7 +243,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[0], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'No new events can be created when an refund event is active');
+            assert.strictEqual(error.reason, 'No new events can be created when a refund event is active');
         }
     });
 
@@ -255,7 +255,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[4], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'You cannot vote as you did not contribute to the crowdfunding event');
+            assert.strictEqual(error.reason, 'You cannot vote as you did not contribute to the fundraiser');
         }
     });
 
@@ -300,7 +300,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[3], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'You have already voted for the funding event');
+            assert.strictEqual(error.reason, 'You have already voted for the voting/refund event');
         }
     });
 
@@ -388,7 +388,7 @@ describe('Closing voting events and trying to vote again', async () => {
                 .send({ from: ganache_acnts[3], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Voting Event Already Completed');
+            assert.strictEqual(error.reason, 'Voting/refund event already completed');
         }
     });
 
@@ -400,7 +400,7 @@ describe('Closing voting events and trying to vote again', async () => {
                 .send({ from: ganache_acnts[3], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Voting Event Already Completed');
+            assert.strictEqual(error.reason, 'Voting event already completed');
         } 
     });
 
@@ -424,7 +424,7 @@ describe('Closing voting events and trying to vote again', async () => {
                 .send({ from: ganache_acnts[4], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'You cannot comment as you did not contribute to the crowdfunding event');
+            assert.strictEqual(error.reason, 'You cannot comment as you are not a contributor of the fundraiser');
         }
     });
 
@@ -503,7 +503,7 @@ describe('Refund voting events', async () => {
             .send({ from: ganache_acnts[1], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'contributor already created a failed refund event before');
+            assert.strictEqual(error.reason, 'Contributor has already created a failed refund event before');
         }
     });
 
