@@ -1,3 +1,4 @@
+// Refer references from "Node JS & Solidity References.pdf" in root folder of this application
 const express = require("express");
 const cors = require("cors");
 const app = express();

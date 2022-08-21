@@ -1,3 +1,4 @@
+// Refer references from "Node JS & Solidity References.pdf" in root folder of this application
 const mysql2 = require("../MySQL/mysql2.js");
 
 const User = function () {

@@ -1,3 +1,5 @@
+// Refer references from "Node JS & Solidity References.pdf" in root folder of this application
+
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 

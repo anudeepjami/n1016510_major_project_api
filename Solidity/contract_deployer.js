@@ -1,3 +1,4 @@
+// Refer references from "Node JS & Solidity References.pdf" in root folder of this application
 const truffle_wallet = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
 const fs = require('fs');

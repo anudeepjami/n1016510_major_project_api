@@ -1,3 +1,5 @@
+// Refer references from "Node JS & Solidity References.pdf" in root folder of this application
+
 const User = require('../models/user.model.js');
 const Email = require('@sendgrid/mail');
 var CryptoJS = require("crypto-js");

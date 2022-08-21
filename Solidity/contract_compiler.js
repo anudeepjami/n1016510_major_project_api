@@ -1,3 +1,4 @@
+// Refer references from "Node JS & Solidity References.pdf" in root folder of this application
 const sol_compiler = require('solc');
 const fs = require('fs');
 

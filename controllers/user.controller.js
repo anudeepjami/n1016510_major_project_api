@@ -1,3 +1,4 @@
+// Refer references from "Node JS & Solidity References.pdf" in root folder of this application
 const User = require('../models/user.model.js');
 var CryptoJS = require("crypto-js");
 var secret = 'test1234';
