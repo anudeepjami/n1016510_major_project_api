@@ -126,7 +126,7 @@ contract CrowdfundingEvent{
     function CreateAnVotingEvent(string memory title, string memory body, address payable destination_wallet_address, uint amount_to_send, bool refund_event) public RefundVoteSuccess{
         require(crowdfunding_event_manager_address == msg.sender || (refund_event == true && contributor_votes[msg.sender] > 0), 'only managers can create fund requests, contributors are only allowed to create refund requests');
         require(refund_event_active == false, 'No new events can be created when an refund event is active');
-        require(contributor_already_created_refund_event[msg.sender] == false, 'contributor already create a failed refund event before');
+        require(contributor_already_created_refund_event[msg.sender] == false, 'contributor already created a failed refund event before');
         require(address(this).balance >= amount_to_send, 'This Crowdfunding Event has less money than the amount you want to send');
         require(address(this).balance > 0, 'This Crowdfunding Event has no money to create new voting events');
         voting_event storage temp = voting_events.push();
