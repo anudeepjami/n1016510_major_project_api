@@ -23,4 +23,7 @@ module.exports = app => {
   //send emails to wallet owners email id's for voting event
   router.post("/sendemail", mailController.SendEmail);
 
+  //send emails to wallet owners email id's for claiming refunds
+  router.post("/sendrefundemail", mailController.SendRefundEmail);
+
 }

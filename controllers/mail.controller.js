@@ -1,6 +1,10 @@
 const User = require('../models/user.model.js');
 const Email = require('@sendgrid/mail');
+var CryptoJS = require("crypto-js");
 const email_api_key = "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";
+var secret = 'test1234';
+
+var app_domain = process.env.PORT == undefined ? 'http://localhost:3000/' : 'https://anudeepjami-crowdfunding.me/'
 
 //Get user wallet details stored in db
 exports.SendEmail = async (req, res) => {
@@ -18,16 +22,19 @@ exports.SendEmail = async (req, res) => {
                         toAddresses.push(item2.email_id);
                 })
             });
+            toAddresses.forEach((item,index)=>{
+                toAddresses[index] = CryptoJS.AES.decrypt(item, secret).toString(CryptoJS.enc.Utf8);
+            });
             const fromAddress = 'admin@anudeepjami-crowdfunding.me';
             const emailSubject = 'AJ Hybrid Crowdfunding Funding Platform';
-            const emailBody = "<div><h2><a href='https://anudeepjami-crowdfunding.me/'>AJ Hybrid Crowdfunding Funding Platform</a></h2>" +
+            const emailBody = "<div><h2><a href='"+app_domain+"'>AJ Hybrid Crowdfunding Funding Platform</a></h2>" +
                 "<h3>Voting Event Alert ...!</h3>" +
                 "<p>As you are a contributor for campaign '"+ req.body.fundDetails[0]+
                 "' with contract address '"+req.body.fundAddress+"'. " +
                 "You are requested to vote for the following voting event created as part of this campaign</p>" +
                 "<p>Voting Event Title: '"+req.body.votingEventDetails[0]+
                 "' <br/> Voting Event Description: '"+req.body.votingEventDetails[1]+"."+
-                "<br/>For More Details <a href='https://anudeepjami-crowdfunding.me/vote?"+
+                "<br/>For More Details <a href='"+app_domain+"vote?"+
                 "FundAddress="+req.body.fundAddress+"&"+"VotingIndex="+req.body.votingIndex+
                 "'>click here</a> to visit the voting event</p></div>";
 
@@ -64,16 +71,19 @@ exports.SendRefundEmail = async (req, res) => {
                         toAddresses.push(item2.email_id);
                 })
             });
+            toAddresses.forEach((item,index)=>{
+                toAddresses[index] = CryptoJS.AES.decrypt(item, secret).toString(CryptoJS.enc.Utf8);
+            });
             const fromAddress = 'admin@anudeepjami-crowdfunding.me';
             const emailSubject = 'AJ Hybrid Crowdfunding Funding Platform';
-            const emailBody = "<div><h2><a href='https://anudeepjami-crowdfunding.me/'>AJ Hybrid Crowdfunding Funding Platform</a></h2>" +
+            const emailBody = "<div><h2><a href='"+app_domain+"'>AJ Hybrid Crowdfunding Funding Platform</a></h2>" +
                 "<h3 style='color:red'>Claim Refund Alert ...!</h3>" +
                 "<p>As you are a contributor for campaign '"+ req.body.fundDetails[0]+
                 "' with contract address '"+req.body.fundAddress+"'. " +
                 "You are requested to claim your refund as the fundraising event has failed...!!!</p>" +
                 "<p>Voting Event Title: '"+req.body.votingEventDetails[0]+
                 "' <br/> Voting Event Description: '"+req.body.votingEventDetails[1]+"."+
-                "<br/>For more details <a href='https://anudeepjami-crowdfunding.me/vote?"+
+                "<br/>For more details <a href='"+app_domain+"vote?"+
                 "FundAddress="+req.body.fundAddress+"&"+"VotingIndex="+req.body.votingIndex+
                 "'>click here</a> to claim your refund</p></div>";
 
