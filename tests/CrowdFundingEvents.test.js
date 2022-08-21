@@ -87,11 +87,10 @@ afterEach(function () {
 //runs after all test cases are executed
 after(() => {
     //Printing all passed and failed test cases
-    console.log("\n All Passed UnitTest Cases");
+    console.log("\n Passed UnitTest Cases");
     console.log("\x1b[32m%s\x1b[0m", unit_test_cases_passed);
-    console.log(" \n All Failed UnitTest Cases");
+    console.log(" \n Failed UnitTest Cases");
     console.log("\x1b[31m%s\x1b[0m", unit_test_cases_failed);
-
 });
 
 describe('Deploy Main Crowdfunding Events Contract', async () => {
