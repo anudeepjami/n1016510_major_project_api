@@ -48,6 +48,9 @@ contract CrowdfundingEvent{
     voting_address_status[] voting_event_address_status;
     discussion_forum[] public discussions;
     bool public refund_event_active;
+    uint public refund_event_fundbalance;
+    bool public refund_event_success;
+    mapping(address => bool) public contributor_already_claimed_refund;
     
 
     struct contributor_details{
@@ -120,7 +123,7 @@ contract CrowdfundingEvent{
         total_votes = total_votes + contributor_votes[msg.sender];
     }
 
-    function CreateAnVotingEvent(string memory title, string memory body, address payable destination_wallet_address, uint amount_to_send, bool refund_event) public {
+    function CreateAnVotingEvent(string memory title, string memory body, address payable destination_wallet_address, uint amount_to_send, bool refund_event) public RefundVoteSuccess{
         require(crowdfunding_event_manager_address == msg.sender || (refund_event == true && contributor_votes[msg.sender] > 0), 'only managers can create fund requests, contributors are only allowed to create refund requests');
         require(refund_event_active == false, 'No new events can be created when an refund event is active');
         require(contributor_already_created_refund_event[msg.sender] == false, 'contributor already create a failed refund event before');
@@ -135,13 +138,14 @@ contract CrowdfundingEvent{
         if(refund_event == true){
             temp.refund_event = true;
             refund_event_active = true;
+            refund_event_fundbalance = address(this).balance;
             contributor_already_created_refund_event[msg.sender] = true;
         }
 
         voting_address_status storage temp2= voting_event_address_status.push();
     }
 
-    function VoteForVotingEvent(uint voting_event_index, bool vote) public{
+    function VoteForVotingEvent(uint voting_event_index, bool vote) public RefundVoteSuccess{
         require(voting_events[voting_event_index].event_completion_status == false, 'Voting Event Already Completed' );
         require(contributor_votes[msg.sender] > 0,'You cannot vote as you did not contribute to the crowdfunding event');
         require(voting_event_address_status[voting_event_index].address_voting_status[msg.sender] == false , 'You have already voted for the funding event');
@@ -157,7 +161,7 @@ contract CrowdfundingEvent{
             );
     }
 
-    function CompleteVotingEvent(uint voting_event_index) public{
+    function CompleteVotingEvent (uint voting_event_index) public RefundVoteSuccess{
         require(address(this).balance >= voting_events[voting_event_index].amount_to_send || refund_event_active == true, 'This Crowdfunding Event has less money than the amount set at the creation of this voting request' );
         require(voting_events[voting_event_index].event_completion_status == false, 'Voting Event Already Completed' );
         require(voting_events[voting_event_index].yes_votes > (total_votes / 2) 
@@ -168,10 +172,7 @@ contract CrowdfundingEvent{
         {
             if(voting_events[voting_event_index].refund_event)
             {
-                uint fund_balance = (address(this).balance);
-                for(uint i = 0; i < contributors_details.length; i++){
-                    payable(contributors_details[i].contributor_address).transfer((fund_balance * contributor_votes[contributors_details[i].contributor_address])/total_votes);
-                }
+                refund_event_success = true;
             }
             else
             {
@@ -183,11 +184,13 @@ contract CrowdfundingEvent{
         {
             voting_events[voting_event_index].event_success_status = false;
         }
-        voting_events[voting_event_index].event_completion_status = true;
+
         if(voting_events[voting_event_index].refund_event)
             {
                 refund_event_active = false;
             }
+        
+        voting_events[voting_event_index].event_completion_status = true;
     }
 
     function CrowdfundingDiscussionForum(uint index,string memory comment, uint rating) public{
@@ -200,5 +203,19 @@ contract CrowdfundingEvent{
                 rating
             )
         );
+    }
+
+    modifier RefundVoteSuccess(){
+        require(refund_event_success == false, 'This Crowdfunding Event has failed and is marked for refund, contributors can start claiming their left over ethereum from this event proportionately' );
+        _;
+    }
+
+    function ClaimRefund() public{
+        require(refund_event_success == true, 'This Crowdfunding event is still ongoing..!!' );
+        require(contributor_votes[msg.sender] > 0,'You cannot claim a refund as you are not a contributor');
+        require(contributor_already_claimed_refund[msg.sender] == false, 'You have already claimed your refund..!!' );
+        
+        payable(msg.sender).transfer((refund_event_fundbalance * contributor_votes[msg.sender])/total_votes);
+        contributor_already_claimed_refund[msg.sender] = true;
     }
 }
