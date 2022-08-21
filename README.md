@@ -1,2 +1,0 @@
-# n1016510_major_project_api
- n1016510_major_project_api
