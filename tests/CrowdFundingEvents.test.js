@@ -525,7 +525,7 @@ describe('Refund voting events', async () => {
                 .send({ from: ganache_acnts[0], gas: '3000000' });
             
         } catch (error) {
-            assert.strictEqual(error.reason, 'This Crowdfunding Event has failed and is marked for refund, contributors can start claiming their left over ethereum from this event proportionately');
+            assert.strictEqual(error.reason, 'This fundraiser has failed and is marked for refund, contributors can start claiming their left over ethereum from this fundraiser');
         }
     });
 
@@ -537,7 +537,7 @@ describe('Refund voting events', async () => {
                 .send({ from: ganache_acnts[1], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'This Crowdfunding event is still ongoing..!!');
+            assert.strictEqual(error.reason, 'This fundraiser is still ongoing..!!');
         }
     });
 
@@ -656,7 +656,7 @@ describe('Refund voting events', async () => {
                 .send({ from: ganache_acnts[4], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'You cannot claim a refund as you are not a contributor');
+            assert.strictEqual(error.reason, 'You cannot claim a refund if you are not a contributor');
         }
 
     });

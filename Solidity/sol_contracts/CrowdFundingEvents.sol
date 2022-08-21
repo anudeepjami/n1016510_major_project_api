@@ -262,14 +262,14 @@ contract CrowdfundingEvent{
 
     // function modifier to check if the fundraiser is set for refund success
     modifier RefundVoteSuccess(){
-        require(refund_event_success == false, 'This Crowdfunding Event has failed and is marked for refund, contributors can start claiming their left over ethereum from this event proportionately' );
+        require(refund_event_success == false, 'This fundraiser has failed and is marked for refund, contributors can start claiming their left over ethereum from this fundraiser' );
         _;
     }
 
     //function to claim refunds in a fundraiser
     function ClaimRefund() public{
-        require(refund_event_success == true, 'This Crowdfunding event is still ongoing..!!' );//flag to check if the fundraiser is set for refund
-        require(contributor_votes[msg.sender] > 0,'You cannot claim a refund as you are not a contributor');//flag to check if the person claiming a refund is a contributor
+        require(refund_event_success == true, 'This fundraiser is still ongoing..!!' );//flag to check if the fundraiser is set for refund
+        require(contributor_votes[msg.sender] > 0,'You cannot claim a refund if you are not a contributor');//flag to check if the person claiming a refund is a contributor
         require(contributor_already_claimed_refund[msg.sender] == false, 'You have already claimed your refund..!!' ); // flag to check if a contributor has claimed refund
         
         payable(msg.sender).transfer((refund_event_fundbalance * contributor_votes[msg.sender])/total_votes);// amount is refunded proportionately to the contributor as per their contibution 
