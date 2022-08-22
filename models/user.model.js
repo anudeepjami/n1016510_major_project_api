@@ -55,4 +55,17 @@ User.InsertWallet = async (body, result) => {
     });
 };
 
+//Deletes wallet details from mysql db
+User.DeleteWallet = async (body, result) => {
+    //Delete wallet details from db
+    mysql2.query("delete from `crowdfunding_data` where `wallet_address`= ?", [body.wallet_address], (err, res) => {
+        if (err) {
+            //returns any db errors
+            result(err, null);
+        }
+        // returns db results
+        result(null, res);
+    });
+};
+
 module.exports = User;

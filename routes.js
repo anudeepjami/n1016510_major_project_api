@@ -20,6 +20,9 @@ module.exports = app => {
   //update user wallet details or insert new user wallet details stored in db
   router.post("/updatewallet", userController.UpdateWalletDetails);
 
+  //Delete user wallet details stored in db
+  router.delete("/deletewallet", userController.DeleteWalletDetails);
+
   //send emails to wallet owners email id's for voting event
   router.post("/sendemail", mailController.SendEmail);
 

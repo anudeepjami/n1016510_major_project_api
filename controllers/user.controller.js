@@ -57,3 +57,17 @@ exports.UpdateWalletDetails = async (req, res) => {
         }
     });
 };
+
+//Delete user wallet details stored in db
+exports.DeleteWalletDetails = async (req, res) => {
+
+    // Delete user wallet details in db
+    User.DeleteWallet(req.body, async (err, wallet_details) => {
+        if (err) {
+            res.status(200).send({ message: err.message });
+        }
+        else {
+            res.status(200).send(wallet_details);
+        }
+    });
+};

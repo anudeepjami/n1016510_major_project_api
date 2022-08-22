@@ -162,8 +162,8 @@ contract CrowdfundingEvent{
         contributor_votes[msg.sender] = msg.value / crowdfunding_event_min_deposit; // calculating no of votes a contributor gets
         contributors_details.push(  // store contributor details in an array
             contributor_details(
-                msg.sender, // contributor address
-                contributor_votes[msg.sender]   // contributor votes
+                msg.sender, //contributor address
+                contributor_votes[msg.sender]   //contributor votes
             )
         );
         total_votes = total_votes + contributor_votes[msg.sender];  // adding all the contributor votes to know the total votes
