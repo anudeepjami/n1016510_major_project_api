@@ -30,15 +30,15 @@ exports.SendEmail = async (req, res) => {
             const fromAddress = 'admin@anudeepjami-crowdfunding.me';
             const emailSubject = 'AJ Hybrid Crowdfunding Funding Platform';
             const emailBody = "<div><h2><a href='"+app_domain+"'>AJ Hybrid Crowdfunding Funding Platform</a></h2>" +
-                "<h3>Voting Event Alert ...!</h3>" +
+                "<h3>"+ !req.body.votingEventDetails[9] ? "Voting" : "Refund"+" Event Alert ...!</h3>" +
                 "<p>As you are a contributor for campaign '"+ req.body.fundDetails[0]+
                 "' with contract address '"+req.body.fundAddress+"'. " +
-                "You are requested to vote for the following voting event created as part of this campaign</p>" +
-                "<p>Voting Event Title: '"+req.body.votingEventDetails[0]+
-                "' <br/> Voting Event Description: '"+req.body.votingEventDetails[1]+"."+
+                "You are requested to vote for the following "+ !req.body.votingEventDetails[9] ? "voting" : "refund"+" event created as part of this campaign</p>" +
+                "<p>"+ !req.body.votingEventDetails[9] ? "Voting" : "Refund"+" Event Title: '"+req.body.votingEventDetails[0]+
+                "' <br/> "+ !req.body.votingEventDetails[9] ? "Voting" : "Refund"+" Event Description: '"+req.body.votingEventDetails[1]+"."+
                 "<br/>For More Details <a href='"+app_domain+"vote?"+
                 "FundAddress="+req.body.fundAddress+"&"+"VotingIndex="+req.body.votingIndex+
-                "'>click here</a> to visit the voting event</p></div>";
+                "'>click here</a> to visit the "+ !req.body.votingEventDetails[9] ? "voting" : "refund"+" event</p></div>";
 
             Email.setApiKey(email_api_key);
             Email.send({
@@ -83,8 +83,8 @@ exports.SendRefundEmail = async (req, res) => {
                 "<p>As you are a contributor for campaign '"+ req.body.fundDetails[0]+
                 "' with contract address '"+req.body.fundAddress+"'. " +
                 "You are requested to claim your refund as the fundraising event has failed...!!!</p>" +
-                "<p>Voting Event Title: '"+req.body.votingEventDetails[0]+
-                "' <br/> Voting Event Description: '"+req.body.votingEventDetails[1]+"."+
+                "<p>Refund Event Title: '"+req.body.votingEventDetails[0]+
+                "' <br/> Refund Event Description: '"+req.body.votingEventDetails[1]+"."+
                 "<br/>For more details <a href='"+app_domain+"vote?"+
                 "FundAddress="+req.body.fundAddress+"&"+"VotingIndex="+req.body.votingIndex+
                 "'>click here</a> to claim your refund</p></div>";
