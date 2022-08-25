@@ -102,12 +102,12 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
         assert.notStrictEqual(crowdfundingEventsContract_instance.options.address, undefined);
     });
 
-    it('2) Checking if fundraising event1 is deployed successfully using Crowdfunding Events Contract', async () => {
+    it('2) Checking if fundraising disbursal request 1 is deployed successfully using Crowdfunding Events Contract', async () => {
         //check if a address is generated when the contract is deployed to the block chain
         assert.notStrictEqual(crowdfundingEventContract_instance.options.address, undefined);
     });
 
-    it('3) Checking if fundraising event1 is deployed by the zeroth ganache[0] eth account with correct details', async () => {
+    it('3) Checking if fundraising disbursal request 1 is deployed by the zeroth ganache[0] eth account with correct details', async () => {
         //calling the GetCrowdfundingEvents method from the Main contract to get the created Crowdfunding Event
         var crowdfundingEvents = await crowdfundingEventsContract_instance.methods.GetCrowdfundingEvents().call();
 
@@ -142,7 +142,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
         assert.strictEqual(5000000000000000000, crowdfunding_event_min_deposit * contributor_votes);
     });
 
-    it('5) Contribution fail message if contribution is less than minimum value set (1 ether)', async () => {
+    it('5) Contribution failure message if contribution is less than the minimum value set (1 ether) in the fundraiser', async () => {
         try {
             //contributor 4 making a contribution of 0.9 eth to the 1st crowdfunding event
             await crowdfundingEventContract_instance.methods
@@ -150,11 +150,11 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('0.9', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Deposit value less than minimum offer value set by the fundraiser');
+            assert.strictEqual(error.reason, 'Deposit value less than the minimum offer value set in the fundraiser');
         }
     });
 
-    it('6) Contribution fail message if contribution is not in multiples of minimum value set (1 ether)', async () => {
+    it('6) Contribution failure message if contribution is not in multiples of the minimum value set (1 ether) in the fundraiser', async () => {
         try {
             //contributor 4 making a contribution of 1.5 eth to the 1st crowdfunding event
             await crowdfundingEventContract_instance.methods
@@ -162,11 +162,11 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('1.5', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Deposit value not in multiples of minimum offer value set by the fundraiser');
+            assert.strictEqual(error.reason, 'Deposit value not in multiples of the minimum offer value set in the fundraiser');
         }
     });
 
-    it('7) Contribution fail message if contribution is already made by an user', async () => {
+    it('7) Contribution failure message if contributor is trying to recontribute', async () => {
         try {
             //contributor 1 making a contribution of 1 eth to the 1st crowdfunding event again
             await crowdfundingEventContract_instance.methods
@@ -178,7 +178,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
         }
     });
 
-    it('8) New contribution fail message if any voting event is created by the manager', async () => {
+    it('8) Contribution failure message if any disbursal/refund request is created', async () => {
         //Fund Manager creates an voting event
         await crowdfundingEventContract_instance.methods
             .CreateAnVotingEvent('Voting Event1', 'Voting Event1 Description', ganache_acnts[5], 1000000, 0)
@@ -190,7 +190,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('1', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'No new contributions are accepted upon the start of voting/refund events');
+            assert.strictEqual(error.reason, 'No new contributions are accepted upon the start of disbursal/refund requests');
         }
     });
 
@@ -209,7 +209,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
             .send({ from: ganache_acnts[0], gas: '3000000' });
     });
 
-    it('9) Voting Event Creation fail message if not intiated by manager', async () => {
+    it('9) Refund request creation failure message if not intiated by fund manager', async () => {
         try {
             //contributor 1 try to intiate an voting event
             await crowdfundingEventContract_instance.methods
@@ -217,11 +217,11 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[1], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Only managers can create voting/refund requests, contributors are only allowed to create refund requests');
+            assert.strictEqual(error.reason, 'Only managers can create disbursal/refund requests, contributors are only allowed to create refund requests');
         }
     });
 
-    it('10) Voting Event Creation fail message if intiated by manager but amount set to transfer is more than funds collected', async () => {
+    it('10) Refund request creation failure message if intiated by fund manager but amount set to transfer is more than funds collected', async () => {
         try {
             //contributor 0 (fund manager) tries to intiate an voting event with transfer set to 10 eth but collected amount is 9 eth
             await crowdfundingEventContract_instance.methods
@@ -233,7 +233,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
         }
     });
 
-    it('11) New Voting Event Creation fail message if refund event intiated by anyone/manager', async () => {
+    it('11) Refund request creation failure message if refund request intiated by non-contributor', async () => {
         //contributor 1 creates an refund event
         await crowdfundingEventContract_instance.methods
             .CreateAnVotingEvent('Refund Event1', 'Refund Event1 ', ganache_acnts[5], '9000000000000000000', 1)
@@ -245,11 +245,11 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[0], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'No new events can be created when a refund event is active');
+            assert.strictEqual(error.reason, 'No new requests can be created when a refund request is active');
         }
     });
 
-    it('12) Voting fail message if voting tried by a non contributor', async () => {
+    it('12) Voting failure message if voting tried by a non-contributor', async () => {
         try {
             //contributor 0 (fund manager) tries to intiate an voting event with transfer set to 10 eth but collected amount is 9 eth
             await crowdfundingEventContract_instance.methods
@@ -289,7 +289,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
 
     });
 
-    it('15) Checking if voting two times for the same voting event is not allowed', async () => {
+    it('15) Voting failure message if a contributor tries voting two times for the same disbursal/refund request', async () => {
         //contributor 3 casts his 5 no votes for Voting Event1
         await crowdfundingEventContract_instance.methods
             .VoteForVotingEvent(0, 0)
@@ -302,11 +302,11 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[3], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'You have already voted for the voting/refund event');
+            assert.strictEqual(error.reason, 'You have already voted for the disbursal/refund request');
         }
     });
 
-    it('16) Checking if polling for success voting event is closed and money is successfully sent to wallet provided by fund manager', async () => {
+    it('16) Checking if polling for a successful disbursal request is closed and ethereum is successfully sent to the wallet provided by the fund manager', async () => {
         //contributor 3 casts his 5 no votes for Voting Event1
         await crowdfundingEventContract_instance.methods
             .VoteForVotingEvent(0, 1)
@@ -328,7 +328,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
         
     });
 
-    it('17) Checking if polling for failure voting event is closed and money is not sent to wallet provided by fund manager', async () => {
+    it('17) Checking if polling for a failed disbursal request is closed and ethereum is not sent to the wallet provided by the fund manager', async () => {
         //contributor 3 casts his 5 no votes for Voting Event1
         await crowdfundingEventContract_instance.methods
             .VoteForVotingEvent(0, 0)
@@ -382,7 +382,7 @@ describe('Closing voting events and trying to vote again', async () => {
 
     
 
-    it('18) Checking if contributor is not able to revote in completed voting events', async () => {
+    it('18) Finish disbursal/refund request failure message if contributor is trying to vote in a finished disbursal/refund request', async () => {
         try {
             //contributor 3 tries to retrigger close polling event of completed voting event1
             await crowdfundingEventContract_instance.methods
@@ -390,11 +390,11 @@ describe('Closing voting events and trying to vote again', async () => {
                 .send({ from: ganache_acnts[3], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Voting/refund event already completed');
+            assert.strictEqual(error.reason, 'Disbursal/refund request already completed');
         }
     });
 
-    it('19) Checking if contributor/manager is not able retrigger complete voting event multiple times', async () => {
+    it('19) Finish disbursal/refund request failure message if contributor/manager is trying to retrigger a finished disbursal/refund request', async () => {
         try {
             //contributor 3 tries to retrigger close polling event of completed voting event1
             await crowdfundingEventContract_instance.methods
@@ -402,11 +402,11 @@ describe('Closing voting events and trying to vote again', async () => {
                 .send({ from: ganache_acnts[3], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Voting event already completed');
+            assert.strictEqual(error.reason, 'Disbursal/Refund request already completed');
         } 
     });
 
-    it('20) Checking if contributor/manager is unable to close polling events with less than 50% votes cast', async () => {
+    it('20) Finish disbursal/refund request failure message if contributor/manager is trying to close disbursal/refund requests with yes/no votes casted being less than 50% ', async () => {
         try {
             //contributor 2 tries to trigger close polling event of incomplete voting event2
             await crowdfundingEventContract_instance.methods
@@ -418,7 +418,7 @@ describe('Closing voting events and trying to vote again', async () => {
         }
     });
 
-    it('21) Checking if ganache account 4 (non contributor) is unable to post comments in discussion forums', async () => {
+    it('21) Comment failure message if non-contributor is trying to post comments in discussion forums', async () => {
         try {
             //ganache account 4 (non contributor) tries to comment on doscussion forum
             await crowdfundingEventContract_instance.methods
@@ -430,7 +430,7 @@ describe('Closing voting events and trying to vote again', async () => {
         }
     });
 
-    it('22) Checking if ganache account 1 (contributor) is able to post comments in discussion forums', async () => {
+    it('22) Checking if contributor is able to post comments in discussion forums', async () => {
 
         //ganache account 1 (contributor) tries to comment on doscussion forum
         await crowdfundingEventContract_instance.methods
@@ -482,12 +482,12 @@ describe('Refund voting events', async () => {
 
     
 
-    it('23) Checking if contributor 1 is able to create a refund voting event 1', async () => {
+    it('23) Checking if a contributor is able to create refund request 1', async () => {
         const VotingEvents = await crowdfundingEventContract_instance.methods.GetVotingEvents().call();
             assert.strictEqual(VotingEvents[2].refund_event, true);
     });
 
-    it('24) Checking if contributor 1 is not able to create a refund event again as his refund event 1 failed', async () => {
+    it('24) Refund request failure message if the same contributor is trying to create refund request 2 after the failure of refund request 1', async () => {
         //contributor 3 casts his 5 no votes for refund voting event1
         await crowdfundingEventContract_instance.methods
             .VoteForVotingEvent(2, 0)
@@ -505,11 +505,11 @@ describe('Refund voting events', async () => {
             .send({ from: ganache_acnts[1], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Contributor has already created a failed refund event before');
+            assert.strictEqual(error.reason, 'Contributor has already created a failed refund request previously');
         }
     });
 
-    it('25) Checking if successful refund event 1 is disabling all other voting functions in fundraising event 1', async () => {
+    it('25) Checking if successful refund request is disabling all other pending requests in the fundraiser', async () => {
         //contributor 3 casts his 5 no votes for refund voting event1
         await crowdfundingEventContract_instance.methods
             .VoteForVotingEvent(2, 1)
@@ -531,7 +531,7 @@ describe('Refund voting events', async () => {
         }
     });
 
-    it('26) Checking if contributor 1 is not able to claim refund for refund event status = false for fundraising event 1', async () => {
+    it('26) Claim refund failure message if a contributor is trying to claim refund from a fundraiser whose refund event success flag is not set to true', async () => {
         try {
             // contributor 1 claiming refund
             await crowdfundingEventContract_instance.methods
@@ -590,7 +590,7 @@ describe('Refund voting events', async () => {
     });
 
 
-    it('27) Checking if contributor 1,2,3 are able to claim their refunds for fundraising event 1', async () => {
+    it('27) Checking if contributors 1,2,3 are able to claim their refunds for a fundraiser with refund event success flag set to true', async () => {
 
         //pre and post account balance arrays for contributors
         var pre_account_balance_of_contributors = [];
@@ -630,7 +630,7 @@ describe('Refund voting events', async () => {
 
     });
 
-    it('28) Checking if contributor 1 is not able to claim refund twice for fundraising event 1', async () => {
+    it('28) Claim refund failure message if a contributor is trying to claim refund more than once', async () => {
 
         // contributor 1 claiming refund
         await crowdfundingEventContract_instance.methods
@@ -649,7 +649,7 @@ describe('Refund voting events', async () => {
 
     });
 
-    it('29) Checking if non contributor ganache account[4] is not able to claim refund for fundraising event 1', async () => {
+    it('29) Claim refund failure message if a non-contributor is trying to claim refund more than once', async () => {
 
         try {
             // contributor 1 claiming refund again
