@@ -229,7 +229,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
                 .send({ from: ganache_acnts[0], gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'This fundraiser has less money than the amount you want to send');
+            assert.strictEqual(error.reason, 'This fundraiser has less Ether than the amount you want to send');
         }
     });
 

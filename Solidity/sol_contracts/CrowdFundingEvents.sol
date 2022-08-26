@@ -166,7 +166,7 @@ contract CrowdfundingEvent
             crowdfunding_event_min_deposit, // minimum entry value set by the fund manager
             contributors_details,   //array which has all the contributor details
             total_votes,    // total votes allowed on the fundraiser
-            address(this).balance,  // total money present in the fundraiser
+            address(this).balance,  // total Ether present in the fundraiser
             voting_events.length);  //no of disbursal/refund requests in the fundraiser
     }
 
@@ -209,9 +209,9 @@ contract CrowdfundingEvent
             //flag to check if a contributor already created a refund request  
             require(contributor_already_created_refund_event[msg.sender] == false, 'Contributor has already created a failed refund request previously');
             // flag to check if fund manager is setting a amount more than the amount left in the fundraiser
-            require(address(this).balance >= amount_to_send, 'This fundraiser has less money than the amount you want to send');
-            // flag to check if fundraiser is out of money
-            require(address(this).balance > 0, 'This fundraiser has no money to create new disbursal requests'); 
+            require(address(this).balance >= amount_to_send, 'This fundraiser has less Ether than the amount you want to send');
+            // flag to check if fundraiser is out of Ether
+            require(address(this).balance > 0, 'This fundraiser has no Ether to create new disbursal requests'); 
             voting_event storage temp = voting_events.push();//creates a new refund request and stores in the disbursal/refund requests array
             temp.title = title; //disbursal/refund request title
             temp.body = body;   //disbursal/refund request description
@@ -261,9 +261,9 @@ contract CrowdfundingEvent
         public 
         RefundVoteSuccess   //// function modifier to check if refund_event_success is active
     {
-        //flag to check if fundraiser has enough money or if it is a refund request
+        //flag to check if fundraiser has enough Ether or if it is a refund request
         require(address(this).balance >= voting_events[voting_event_index].amount_to_send || refund_event_active == true, 
-        'This fundraiser has less money than the amount set at the creation of this disbursal request' ); 
+        'This fundraiser has less Ether than the amount set at the creation of this disbursal request' ); 
         //flag to check if a disbursal/refund request is closed
         require(voting_events[voting_event_index].event_completion_status == false, 'Disbursal/Refund request already completed' );
         // flag to check if more than 50% of the votes for a disbursal/refund request are yes/no 
