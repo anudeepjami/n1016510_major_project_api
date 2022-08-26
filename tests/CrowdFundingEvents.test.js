@@ -150,7 +150,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('0.9', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Deposit value less than the minimum contribution value set in the fundraiser');
+            assert.strictEqual(error.reason, 'Contribution value less than the minimum contribution value set in the fundraiser');
         }
     });
 
@@ -162,7 +162,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('1.5', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Deposit value not in multiples of the minimum contribution value set in the fundraiser');
+            assert.strictEqual(error.reason, 'Contribution value not in multiples of the minimum contribution value set in the fundraiser');
         }
     });
 
