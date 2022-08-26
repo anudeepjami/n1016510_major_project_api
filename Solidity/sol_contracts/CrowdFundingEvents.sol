@@ -176,9 +176,9 @@ contract CrowdfundingEvent
         // flag to reject new contributors upon start of first disbursal/refund requests
         require(voting_events.length == 0, 'No new contributions are accepted upon the start of disbursal/refund requests');
         //flag to reject contributions made less than minimum value    
-        require(msg.value >= crowdfunding_event_min_deposit, 'Deposit value less than the minimum offer value set in the fundraiser');
+        require(msg.value >= crowdfunding_event_min_deposit, 'Deposit value less than the minimum contribution value set in the fundraiser');
         //flag to reject contributions not made in multiples of minimum value    
-        require(msg.value % crowdfunding_event_min_deposit == 0, 'Deposit value not in multiples of the minimum offer value set in the fundraiser');
+        require(msg.value % crowdfunding_event_min_deposit == 0, 'Deposit value not in multiples of the minimum contribution value set in the fundraiser');
         // flag to reject contributors trying to contribute again  
         require(contributor_votes[msg.sender] == 0,'You have already contributed to the fundraiser');     
         contributor_votes[msg.sender] = msg.value / crowdfunding_event_min_deposit; // calculating no of votes a contributor gets

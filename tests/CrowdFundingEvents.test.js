@@ -142,7 +142,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
         assert.strictEqual(5000000000000000000, crowdfunding_event_min_deposit * contributor_votes);
     });
 
-    it('5) Contribution failure message if contribution is less than the minimum value set (1 ether) in the fundraiser', async () => {
+    it('5) Contribution failure message if contribution is less than the minimum contribution value set (1 ether) in the fundraiser', async () => {
         try {
             //contributor 4 making a contribution of 0.9 eth to the 1st crowdfunding event
             await crowdfundingEventContract_instance.methods
@@ -150,11 +150,11 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('0.9', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Deposit value less than the minimum offer value set in the fundraiser');
+            assert.strictEqual(error.reason, 'Deposit value less than the minimum contribution value set in the fundraiser');
         }
     });
 
-    it('6) Contribution failure message if contribution is not in multiples of the minimum value set (1 ether) in the fundraiser', async () => {
+    it('6) Contribution failure message if contribution is not in multiples of the minimum contribution value set (1 ether) in the fundraiser', async () => {
         try {
             //contributor 4 making a contribution of 1.5 eth to the 1st crowdfunding event
             await crowdfundingEventContract_instance.methods
@@ -162,7 +162,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[4], value: Web3.utils.toWei('1.5', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'Deposit value not in multiples of the minimum offer value set in the fundraiser');
+            assert.strictEqual(error.reason, 'Deposit value not in multiples of the minimum contribution value set in the fundraiser');
         }
     });
 
