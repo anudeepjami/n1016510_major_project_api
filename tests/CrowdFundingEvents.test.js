@@ -174,7 +174,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[1], value: Web3.utils.toWei('1', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'You have already contributed to the fundraiser');
+            assert.strictEqual(error.reason, 'You have already contributed to the fundraise');
         }
     });
 
@@ -251,7 +251,7 @@ describe('Create a Voting Event for the fundraising event', async () => {
 
     it('12) Voting failure message if voting tried by a non-contributor', async () => {
         try {
-            //contributor 0 (fund manager) tries to intiate an voting event with transfer set to 10 eth but collected amount is 9 eth
+            //non contributor tries to vote
             await crowdfundingEventContract_instance.methods
                 .VoteForVotingEvent(0, 1)
                 .send({ from: ganache_acnts[4], gas: '3000000' });
