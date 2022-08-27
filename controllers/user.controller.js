@@ -14,6 +14,7 @@ exports.GetWalletDetails = async (req, res) => {
         else {
             var temp = wallet_details;
             if (temp.length == 1){
+                //Decrypting Email ID
                 temp[0].email_id = CryptoJS.AES.decrypt(temp[0].email_id, secret).toString(CryptoJS.enc.Utf8);
             }
             res.status(200).send(temp);
@@ -25,6 +26,7 @@ exports.GetWalletDetails = async (req, res) => {
 exports.UpdateWalletDetails = async (req, res) => {
 
     var input = req;
+    // Encrypting Email ID
     input.body.email_id = CryptoJS.AES.encrypt(input.body.email_id, secret).toString();
     // Update or insert user wallet details in db
     User.GetWalletDetails(input.body, async (err, wallet_details) => {
