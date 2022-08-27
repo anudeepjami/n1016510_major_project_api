@@ -59,7 +59,7 @@ contract CrowdfundingEvents
 
 }
 
-//creates a fundraiser and stores it in the respective blockchain network
+//Fundraiser contract triggered by the main contract
 contract CrowdfundingEvent
 {
 

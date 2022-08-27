@@ -33,7 +33,7 @@ exports.SendEmail = async (req, res) => {
                 "<h3>"+ (!req.body.votingEventDetails[9] ? "Disbursal" : "Refund")+" Request Alert ...!</h3>" +
                 "<p>As you are a contributor for the fundraiser '"+ req.body.fundDetails[0]+
                 "' with contract address '"+req.body.fundAddress+"'. " +
-                "You are requested to vote for the following "+ (!req.body.votingEventDetails[9] ? "disbursal" : "refund")+" request created as part of this fundraiser</p>" +
+                "<br/>You are requested to vote for the following "+ (!req.body.votingEventDetails[9] ? "disbursal" : "refund")+" request created as part of this fundraiser</p>" +
                 "<p>"+ (!req.body.votingEventDetails[9] ? "Disbursal" : "Refund")+" Request Title: '"+req.body.votingEventDetails[0]+
                 "' <br/> "+ (!req.body.votingEventDetails[9] ? "Disbursal" : "Refund")+" Request Description: '"+req.body.votingEventDetails[1]+"."+
                 "<br/>For More Details <a href='"+app_domain+"vote?"+
@@ -82,7 +82,7 @@ exports.SendRefundEmail = async (req, res) => {
                 "<h3 style='color:red'>Claim Refund Alert ...!</h3>" +
                 "<p>As you are a contributor for the fundraiser '"+ req.body.fundDetails[0]+
                 "' with contract address '"+req.body.fundAddress+"'. " +
-                "You are requested to claim your refund as the fundraiser has failed...!!!</p>" +
+                "<br/>You are requested to claim your refund as the fundraiser has failed...!!!</p>" +
                 "<p>Refund Request Title: '"+req.body.votingEventDetails[0]+
                 "' <br/> Refund Request Description: '"+req.body.votingEventDetails[1]+"."+
                 "<br/>For more details <a href='"+app_domain+"vote?"+

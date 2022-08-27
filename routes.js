@@ -14,19 +14,19 @@ module.exports = app => {
     res.status(200).send("Welcome to Version 1 of Anudeep Jami N1016510 Major Project");
   });
 
-  //Get user wallet details stored in db
+  //Get user wallet details stored in DB
   router.put("/getwallet", userController.GetWalletDetails);
 
-  //update user wallet details or insert new user wallet details stored in db
+  //update user wallet details in DB or insert new user wallet details into DB
   router.post("/updatewallet", userController.UpdateWalletDetails);
 
-  //Delete user wallet details stored in db
+  //Delete user wallet details stored in DB
   router.delete("/deletewallet", userController.DeleteWalletDetails);
 
-  //send emails to wallet owners email id's for voting event
+  //send emails to wallet owners Email IDs for disbursal or refund requests
   router.post("/sendemail", mailController.SendEmail);
 
-  //send emails to wallet owners email id's for claiming refunds
+  //send emails to wallet owners Email IDs for claiming refunds
   router.post("/sendrefundemail", mailController.SendRefundEmail);
 
 }
