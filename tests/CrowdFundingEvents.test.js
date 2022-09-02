@@ -174,7 +174,7 @@ describe('Deploy Main Crowdfunding Events Contract', async () => {
                 .send({ from: ganache_acnts[1], value: Web3.utils.toWei('1', 'ether'), gas: '3000000' });
             throw 'test case should fail';
         } catch (error) {
-            assert.strictEqual(error.reason, 'You have already contributed to the fundraise');
+            assert.strictEqual(error.reason, 'You have already contributed to the fundraiser');
         }
     });
 

@@ -13,7 +13,7 @@ exports.GetWalletDetails = async (req, res) => {
         }
         else {
             var temp = wallet_details;
-            if (temp.length == 1){
+            if (temp?.length == 1){
                 //Decrypting Email ID
                 temp[0].email_id = CryptoJS.AES.decrypt(temp[0].email_id, secret).toString(CryptoJS.enc.Utf8);
             }
